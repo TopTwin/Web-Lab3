@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
  <head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>Web-App3</title>
  </head>
- <body>
+<body>
 <div style="width: 700px;">
     <div style="width: 30%; height: 250px; float: left; margin: 50px;">
      <h1>Регистрация</h1>
@@ -23,23 +24,22 @@
         </tr>
         <tr>
             <td> <p>Введите пароль</p> </td>
-            <td> <input type="text" id="pas1">  </td>
+            <td> <input type="password" id="pas1">  </td>
         </tr>
         <tr>
             <td> <p>Подтвердите пароль</p> </td>
-            <td><input type="text" id="pas2"> </td>
+            <td> <input type="password" id="pas2"> </td>
         </tr>
         <tr>
-            <td></td>
-            <td><label><input type="checkbox" class="password-checkbox"> Показать пароль</label></td>
+            <td><input type="submit" value="Зарегистрироваться" id="reg"></td>
+            <td><input type="submit" value="Показать/скрыть пароль" onclick="HidePas()"></td>
         </tr>
-        <tr><td><input type="submit" value="Зарегистрироваться" id="reg"></td></tr>
      </table>
     </div>
     <div style="width: 150px; height: 250px; float: right; margin-right: 20px; margin-top: 80px">
         <h2>Вход</h2>
         <input type="text" placeholder="Login" id="login" style="margin: 10px; float: left;">
-        <input type="text" placeholder="Password" id="password" style="margin: 10px; float: left;">
+        <input type="password" placeholder="Password" id="password" style="margin: 10px; float: left;">
         <input type="submit" value="Войти" onclick="signIn()" id="signin" style="margin: 10px; float: left;">
     </div>
     <div style="width: 250px; height: 40%; float: right; margin-top: 30px; margin-right: 0px;">
@@ -48,100 +48,7 @@
         <div style="width: 100%;"><label id="city2"></label></div>
         <div style="width: 100%;"><label id="age2"></label></div>
     </div>
-    
 </div>
-<script>
-    const reg = document.getElementById("reg");
-    reg.addEventListener("click",e => {
-        e.preventDefault();
-        regist();
-    });
-    var login = document.getElementById("log");
-    var city = document.getElementById("city");
-    var age = document.getElementById("age");
-    var pas1 = document.getElementById("pas1");
-    var pas2 = document.getElementById("pas2");
-async function regist()
-{
-    if(await checkForms()) {
-        const response = fetch("api/users", {
-                method: "POST",
-                headers: { "Accept": "application/json", "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    login: login.value,
-                    city: city.value,
-                    age: age.value,
-                    password: pas1.value
-                })
-            });
-        alert("Регистрация успешно завершена");
-    }
-}
-async function checkForms()
-{
-    var lul = 1;
-    let users = await GetUsers();
-    users.forEach(us => {
-        if(us.login == login.value){
-        lul = 0;
-        } 
-    });
-    if(lul == 0){
-        alert("Данный логин уже используется");
-        return 0;
-    }
-    if( login.value == '' ||
-    city.value == '' ||
-    age.value == '' ||
-    pas1.value == '' ||
-    pas2.value == '')
-    {
-        alert("Заполните все формы");
-        return  0;
-    }
-    if (pas1.value != pas2.value){
-        alert("Введенные пароли не совпадают");
-        return  0;
-    }
-    if((/\D/).test(age.value)){
-        alert("Укажите корректный возраст");
-        return  0;
-    }
-    return 1;;
-}
-    async function GetUsers() {
-            // отправляет запрос и получаем ответ
-            const response = await fetch("/api/users", {
-                method: "GET",
-                headers: { "Accept": "application/json" }
-            });
-            // если запрос прошел нормально
-            if (response.ok === true) {
-                // получаем данные
-                const users = await response.json();
-                return Promise.resolve(users);
-            };
-    }
-    async function signIn(){
-        let users = await GetUsers();
-        let log = document.getElementById("login");
-        let pas = document.getElementById("password");
-        let flag = 0;
-        users.forEach(us => {
-            if(us.login == log.value && us.password == pas.value){
-                flag = 1;
-                alert("Вы вошли в систему");
-                let infoLog = document.getElementById("log2");
-                infoLog.innerText = "Логин: " + us.login;
-                let infoCity = document.getElementById("city2");
-                infoCity.innerText = "Город: " + us.city;
-                let infoAge = document.getElementById("age2");
-                infoAge.innerText = "Возраст: " + us.age;
-            }         
-        })
-        if(flag == 0)
-            alert("Пароль или логин неверен");
-    }
-</script>
+<script src="lul.js"></script>
  </body>
 </html>
